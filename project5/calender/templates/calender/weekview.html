@@ -1,0 +1,34 @@
+{% extends "calender/layout.html" %}
+{% load static %}
+
+
+{% block body %}
+<table class="table table-striped table-bordered table-sm">
+    <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Sunday</th>
+            <th scope="col">Monday</th>
+            <th scope="col">Tuesday</th>
+            <th scope="col">Wednesday</th>
+            <th scope="col">Thursday</th>
+            <th scope="col">Friday</th>
+            <th scope="col">Saturday</th>
+        </tr>
+    </thead>
+    <tbody>
+    {%for hour in hours%}
+        <tr>
+            <th scope="row">{{hour}}</th>
+            {%for day,month in thisweek%}
+            <td id="d{{day}}{{month}}{{hour}}" ></td>
+            {%endfor%}
+        </tr>
+    {%endfor%}
+    </tbody>
+  </table>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'calender/weekview.js' %}"></script>
+{% endblock %}
