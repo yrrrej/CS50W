@@ -1,0 +1,64 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <h1 class="ml-2">All Post</h1>
+    {% if user.is_authenticated %}
+    <div id="newpost" class="container-flex border border-light-3  m-2 pr-3 rounded">
+        <h3 class="m-2"><strong>New Post</strong></h3>
+        <form method="post" id="create" action="{%url 'index'  %}">
+            {% csrf_token %}
+            <textarea class="form-control m-2" name="contents" id="contents" rows="3"></textarea>
+            <input type="submit" class="btn btn-primary m-2" value="Post" name="postbutton"> 
+        </form>
+    </div>
+    {%endif%}
+
+    <div id="post">
+        {%for i in page_obj%}
+        <div class="container-flex border border-light-3  m-2 pr-3 rounded">
+        <div class='ml-2'> 
+        <div><a href="{% url 'profile' i.user %}"><strong>{{i.user}}</strong></a></div> 
+        <div class="w-100"></div>
+        <div class="divbutton" id="divbutton{{i.id}}" data-id="{{i.id}}"><button class="btn btn-outline-primary btn-sm mt-2" id='button{{i.id}}' name='button{{i.id}}' >Edit Post</button></div>
+        <div class="w-100"></div>
+        <div class="divform" id="divform{{i.id}}">
+            <form method="put" id="edit{{i.id}}" action="{%url 'index'  %}" class="editform" data-id="{{i.id}}">
+                {%csrf_token%}
+                <textarea class="form-control m-2" name="contents" id="contents{{i.id}}" rows="3">{{i.content}}</textarea>
+                <input type="submit" class="btn btn-primary m-2 edit" value="Edit" name="editbutton" id='editbutton{{i.id}}' data-id="{{i.id}}"> 
+            </form> 
+        </div> 
+        <div class="w-100"></div>
+        <div id="divcontent{{i.id}}"> <p>{{i.content}}</p></div> 
+        <div class="w-100"></div>
+        <div> <p class='text-secondary'>{{i.timestamp}}</p></div>
+        <div class="heart" data-id="{{i.id}}"><i class="bi-heart" style="color:black" id='heart{{i.id}}' ></i><p id='likes{{i.id}}'>{{i.likes.count}}</p></div>
+        </div>
+        </div>
+        {%endfor%}
+    </div>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+    
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/index.js' %}"></script>
+{% endblock %}
