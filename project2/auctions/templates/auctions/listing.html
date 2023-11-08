@@ -1,0 +1,101 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    {% if closed %}
+        <h1>{{closed}}</h1>
+    {%else%}
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <h3>Listing {{listing.id}}: {{listing.title}}</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <img src="{{listing.img_url}}" width="300" height="300" class="border border-dark">
+                    Listed by <strong>{{listing.listed_by}}</strong>
+                </div>
+                <div class="col">
+                    <div class="row-m2">
+                        <strong>Description by owner:</strong> {{listing.description}}
+                    </div>
+                    <div class="row-m1">
+                        <div>
+                            {%if bids%}
+                                Price: <strong>${{bids}}</strong> by {{bids.bid_by}}
+                            {%else%}
+                                No bids yet. Starting price of ${{listing.starting_bid}} by owner.
+                            {%endif%}
+                        </div>
+                        <div>
+                            <form action="{%url 'listing' listing.id %}" method="post" class="form-inline">
+                                {% csrf_token %}
+                                {% if user.is_authenticated %}
+                                <div class="form-group">
+                                    <input class="form-control mb-2" type="text" name="new_bid" placeholder="New Bid">
+                                </div>
+                                <input class="btn btn-primary mb-2" type="submit" name="Bid" value="Bid">
+                                {%endif%}
+                            </form> 
+                        </div>
+                        <div>
+                        {% if message %}
+                        <div>{{ message }}</div>
+                        {% endif %}
+                        </div>
+                    </div>
+                    <div class="row-m2">
+                        <form action="{%url 'listing' listing.id %}" method="post" class="form-inline">
+                            {% csrf_token %}
+                            {% if user.is_authenticated %}
+                            <div class="form-group mb-2">
+                                <input class="btn btn-danger" type="submit" name="Close" value="Close Auction">
+                            </div>
+                                <div class="form-group mx-sm-3 mb-2">
+                                    <input class="btn btn-outline-success" type="submit" name="Watchlist" value="Add to watchlist">
+                                </div>
+                                <div class="form-group mb-2">
+                                    <input class="btn btn-outline-danger" type="submit" name="RemoveWatchlist" value="Remove from watchlist">
+                                </div>
+                            {%endif%}
+                        </form>
+                        <div>
+                            {%if noauthoritytoclose %}
+                                <div>{{noauthoritytoclose}}</div>
+                            {%endif%}
+                            {%if listingadded %}
+                                <div>{{listingadded}}</div>
+                            {%endif%}
+                            {%if listingremoved %}
+                                <div>{{listingremoved}}</div>
+                            {%endif%}
+                            </div>
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+            <div>
+                    <h4>Comments</h4>
+                    <ul class="nav flex-column">
+                        {%for comment in comments%}
+                        <li>
+                            <strong>{{comment.comment_by}}</strong>: {{comment}}
+                        </li>
+                        {% endfor %}
+                        <form action="{%url 'listing' listing.id %}" method="post">
+                            {% csrf_token %}
+                            {% if user.is_authenticated %}
+                            <div class="form-group">
+                                <input autofocus class="form-control" type="text" name="new_comment" placeholder="New Comment">
+                            </div>
+                            <input class="btn btn-primary" type="submit" name='Comment' value="Comment">
+                            {%endif%}
+                        </form>   
+                    </ul>
+                    <a href="{%url 'index'%}">Back to all listings{{test}}</a>
+            </div>
+    {%endif%}
+{% endblock %}
